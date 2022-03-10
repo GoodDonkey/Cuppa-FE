@@ -39,13 +39,14 @@ function sendMessage(message) {
     }
 }
 
-function render(message, sender) {
+function render(data) {
     console.log("render called")
     scrollToBottom();
     let contextResponse = {
-        message: message,
+        message: data.message,
         time: getCurrentTime(),
-        userName: sender
+        username: data.sender.username,
+        // userId: data.sender.id
     };
 
     setTimeout(function () {

@@ -1,15 +1,17 @@
 const url = 'http://127.0.0.1:8081';
 let stompClient;
 let selectedUserId;
+let $loginUsername;
 let $loginUserId;
 let template = Handlebars.compile($("#message-template").html());
 let userTemplate = Handlebars.compile($("#user-template").html());
 
 $(document).ready(function() {
-    $loginUserId = getUserName();
-    console.log("$loginUsername", $loginUserId)
+    $loginUserId = getUserId();
+    $loginUsername = getUsername();
+    console.log("$loginUsername", $loginUsername)
     if ($loginUserId !== null) {
-        document.getElementById("usernameArea").innerHTML=$loginUserId;
+        document.getElementById("usernameArea").innerHTML=$loginUsername;
         fetchAllUsers()
         // fetchChatRooms()
     } else {
@@ -26,27 +28,28 @@ function connectToChatServer() {
 
 }
 
-function connectToChat(userName) {
+function connectToChat(userId) {
     console.log("connecting to chat...")
     stompClient.connect({}, function (frame) {
         console.log("connected to: " + frame);
-        stompClient.subscribe("/topic/messages/" + userName, function (response) {
+        stompClient.subscribe("/topic/messages/" + userId, function (response) {
             let data = JSON.parse(response.body);
             console.log(data)
             console.log("selectedUser: " + selectedUserId);
-            console.log("data.sender: " + data.sender);
+            console.log("data.sender: " + data.sender.id);
 
             // 보낸 사람과 채팅을 하고 있는 경우
-            if (selectedUserId === data.sender) {
-                render(data.message, data.sender);
+            if (selectedUserId == data.sender.id) {
+                render(data);
             } else {
+                console.log("else called")
                 // 현재 상대방과 채팅하고 있지 않은 경우
-                $newMessageCount++;
-                if ($('#newMessages_' + data.sender).length === 0) {
-                    $('#userNameAppender_' + data.sender).append('<span id="newMessages_' + data.sender + '" style="color: red"> +' + $newMessageCount + '</span>');
-                } else {
-                    $('#newMessage_' + data.sender).text('+' + $newMessageCount)
-                }
+                // if ($('#newMessages_' + data.senderId).val() === 0) {
+                //     $('#usernameAppender_' + data.senderId).append('<span id="newMessages_' + data.senderId + '" style="color: red"> +' + $newMessageCount + '</span>');
+                // } else {
+                //     $('#newMessage_' + data.senderId).text('+' + $newMessageCount)
+                // }
+                // $('#newMessages_' + data.senderId).text()
             }
         });
     }, function () {
@@ -56,8 +59,8 @@ function connectToChat(userName) {
 
 function sendMsg(text) {
     stompClient.send("/app/chat/" + selectedUserId, {}, JSON.stringify({
-        destination: selectedUserId,
-        sender: $loginUserId,
+        receiverId: selectedUserId,
+        senderId: $loginUserId,
         message: text
     }));
 }
@@ -95,7 +98,7 @@ function fetchAllMessagesWith(userId) {
             scrollToBottom();
 
             response.forEach(message => {
-                if (message.sender === $loginUserId) { // 내가 보낸 메시지면
+                if (message.sender.id === $loginUserId) { // 내가 보낸 메시지면
                     let context = {
                         message: message.message.trim(),
                         time: getCurrentTime(), // Todo: 메시지에 저장된 시간으로 바꾸기
@@ -105,7 +108,7 @@ function fetchAllMessagesWith(userId) {
                     let contextResponse = {
                         message: message.message.trim(),
                         time: getCurrentTime(),
-                        userName: message.sender
+                        username: message.sender.username
                     };
                     $chatHistoryList.append(templateResponse(contextResponse));
                 }
@@ -135,8 +138,8 @@ function fetchAllUsers() {
             console.log("fetchAllUsers(): ", response);
             for (let i = 0; i < members.length; i++) {
                 let context = {
-                    newMessages: "11",
-                    userName: members[i].username,
+                    newMessages: 0,
+                    username: members[i].username,
                     userId: members[i].id,
                     online: "online??"
                 }
@@ -150,7 +153,32 @@ function fetchAllUsers() {
     })
 }
 
-function getUserName() {
+function getUserId() {
+    let userId;
+    $.ajax({
+        url: url + "/members/getUserId",
+        async: false,
+        type: "GET",
+        // dataType: 'json',
+        contentType: "application/json; charset=utf-8",
+        crossDomain: true,
+        xhrFields: {
+            withCredentials: true
+        },
+        success: function(response) {
+            userId = response
+        },
+        error: function(response) {
+            console.log("getUsername error", response)
+            userId = null
+        }
+    }).always(function (response){
+        console.log("getUserName()", response)
+    })
+    return userId
+}
+
+function getUsername() {
     let username;
     $.ajax({
         url: url + "/members/getUsername",
