@@ -46,7 +46,6 @@ function render(data) {
         message: data.message,
         time: getCurrentTime(),
         username: data.sender.username,
-        // userId: data.sender.id
     };
 
     setTimeout(function () {

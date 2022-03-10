@@ -40,38 +40,6 @@
                         </div>
                     </div>
 
-                    <a href="#" class="list-group-item list-group-item-action border-0">
-                        <div class="badge bg-success float-right">5</div>
-                        <div class="d-flex align-items-start">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar5.png" class="rounded-circle mr-1"
-                                 alt="Vanessa Tucker" width="40" height="40">
-                            <div id="friend-name" class="flex-grow-1 ml-3">
-                                Vanessa Tucker
-                                <div id="friend-online" class="small"><span class="fas fa-circle chat-online"></span> Online</div>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="#" class="list-group-item list-group-item-action border-0">
-                        <div class="badge bg-success float-right">2</div>
-                        <div class="d-flex align-items-start">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar2.png" class="rounded-circle mr-1"
-                                 alt="William Harris" width="40" height="40">
-                            <div class="flex-grow-1 ml-3">
-                                William Harris
-                                <div class="small"><span class="fas fa-circle chat-online"></span> Online</div>
-                            </div>
-                        </div>
-                    </a>
-                    <a href="#" onclick="selectUser('Sharon Lessman')" class="list-group-item list-group-item-action border-0">
-                        <div class="d-flex align-items-start">
-                            <img src="https://bootdey.com/img/Content/avatar/avatar3.png" class="rounded-circle mr-1"
-                                 alt="Sharon Lessman" width="40" height="40">
-                            <div class="flex-grow-1 ml-3">
-                                Sharon Lessman
-                                <div class="small"><span class="fas fa-circle chat-online"></span> Online</div>
-                            </div>
-                        </div>
-                    </a>
                     <hr class="d-block d-lg-none mt-1 mb-0">
                 </div>
                 <!--                    User List end-->
@@ -139,11 +107,11 @@
                     <div class="py-2 px-4 border-bottom d-lg-block">
                         <div class="d-flex align-items-center py-1">
                             <div class="position-relative">
-                                <img src="https://bootdey.com/img/Content/avatar/avatar3.png"
+                                <img id="selected-user-image" src="http://127.0.0.1:8081/images/defaultUser.jpeg"
                                      class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40">
                             </div>
                             <div class="flex-grow-1 pl-3">
-                                <strong>Sharon Lessman</strong>
+                                <strong id="chat-with">Sharon Lessman</strong>
                                 <div class="text-muted small"><em>Typing...</em></div>
                             </div>
 
@@ -179,30 +147,7 @@
 
                     <div class="position-relative">
                         <div id="chat-messages" class="chat-messages p-4">
-                                <div class="chat-message-right pb-4">
-                                    <div>
-                                        <img src="https://bootdey.com/img/Content/avatar/avatar1.png"
-                                             class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">
-                                        <div class="text-muted small text-nowrap mt-2">2:33 am</div>
-                                    </div>
-                                    <div class="flex-shrink-1 bg-light rounded py-2 px-3 mr-3">
-                                        <div class="font-weight-bold mb-1">You</div>
-                                        Lorem ipsum dolor sit amet, vis erat denique in, dicunt prodesset te vix.
-                                    </div>
-                                </div>
-                                <div class="chat-message-left pb-4">
-                                    <div>
-                                        <img src="https://bootdey.com/img/Content/avatar/avatar3.png"
-                                             class="rounded-circle mr-1" alt="Sharon Lessman" width="40"
-                                             height="40">
-                                        <div class="text-muted small text-nowrap mt-2">2:34 am</div>
-                                    </div>
-                                    <div class="flex-shrink-1 bg-light rounded py-2 px-3 ml-3">
-                                        <div class="font-weight-bold mb-1">Sharon Lessman</div>
-                                        Sit meis deleniti eu, pri vidit meliore docendi ut, an eum erat animal
-                                        commodo.
-                                    </div>
-                                </div>
+
                         </div>
                     </div>
 
@@ -218,14 +163,16 @@
         </div>
     </div>
 </main>
+
+
 <script id="user-template" type="text/x-handlebars-template">
     <a href="#" id="user-link-{{userId}}" onclick="selectUser('{{userId}}')" class="list-group-item list-group-item-action border-0">
-        <div id="newMessages_{{username}}" class="badge bg-success float-right">{{new_messages}}</div>
+        <div id="newMessages_{{userId}}" class="badge bg-success float-right">{{new_messages}}</div>
         <div class="d-flex align-items-start">
             <img src="http://127.0.0.1:8081/images/defaultUser.jpeg" class="rounded-circle mr-1"
                  alt="default" width="40" height="40">
-            <div id="username-area" class="flex-grow-1 ml-3">
-                {{username}}
+            <div class="flex-grow-1 ml-3">
+                <span id="username-area-{{userId}}">{{username}}</span>
                 <div class="small"><span class="fas fa-circle chat-online"></span>{{online}}</div>
             </div>
         </div>
@@ -235,7 +182,7 @@
 <script id="message-template" type="text/x-handlebars-template">
         <div class="chat-message-right pb-4">
             <div>
-                <img src="https://bootdey.com/img/Content/avatar/avatar1.png"
+                <img src="http://127.0.0.1:8081/images/defaultUser.jpeg"
                      class="rounded-circle mr-1" alt="Chris Wood" width="40" height="40">
                 <div class="text-muted small text-nowrap mt-2">{{time}}</div>
             </div>
@@ -249,7 +196,7 @@
 <script id="message-response-template" type="text/x-handlebars-template">
     <div class="chat-message-left pb-4">
         <div>
-            <img src="https://bootdey.com/img/Content/avatar/avatar3.png"
+            <img src="http://127.0.0.1:8081/images/defaultUser.jpeg"
                  class="rounded-circle mr-1" alt="Sharon Lessman" width="40" height="40">
             <div class="text-muted small text-nowrap mt-2">{{ time }}</div>
         </div>

@@ -1,10 +1,11 @@
 const url = 'http://127.0.0.1:8081';
 let stompClient;
-let selectedUserId;
+let $selectedUserId;
 let $loginUsername;
 let $loginUserId;
 let template = Handlebars.compile($("#message-template").html());
 let userTemplate = Handlebars.compile($("#user-template").html());
+let unreadCount = new Map();
 
 $(document).ready(function() {
     $loginUserId = getUserId();
@@ -25,7 +26,6 @@ function connectToChatServer() {
     let socket = new SockJS(url + '/stomp/chat');
     stompClient = Stomp.over(socket);
     connectToChat($loginUserId); // 나에게 오는 메시지를 subscribe
-
 }
 
 function connectToChat(userId) {
@@ -35,21 +35,23 @@ function connectToChat(userId) {
         stompClient.subscribe("/topic/messages/" + userId, function (response) {
             let data = JSON.parse(response.body);
             console.log(data)
-            console.log("selectedUser: " + selectedUserId);
-            console.log("data.sender: " + data.sender.id);
-
+            console.log("selectedUser: " + $selectedUserId);
+            let senderId = String(data.sender.id);
+            console.log("data.sender.id: " + senderId);
             // 보낸 사람과 채팅을 하고 있는 경우
-            if (selectedUserId == data.sender.id) {
+            if ($selectedUserId === senderId) {
                 render(data);
             } else {
-                console.log("else called")
                 // 현재 상대방과 채팅하고 있지 않은 경우
-                // if ($('#newMessages_' + data.senderId).val() === 0) {
-                //     $('#usernameAppender_' + data.senderId).append('<span id="newMessages_' + data.senderId + '" style="color: red"> +' + $newMessageCount + '</span>');
-                // } else {
-                //     $('#newMessage_' + data.senderId).text('+' + $newMessageCount)
-                // }
-                // $('#newMessages_' + data.senderId).text()
+                let newMessages = $('#newMessages_' + senderId);
+                if (unreadCount.has(senderId) === false) {
+                    unreadCount.set(senderId, 1)
+                    newMessages.html('+' + unreadCount.get(senderId))
+                } else {
+                    unreadCount.set(senderId, unreadCount.get(senderId) + 1)
+                    newMessages.html('+' + unreadCount.get(senderId))
+                }
+                console.log(unreadCount)
             }
         });
     }, function () {
@@ -58,28 +60,26 @@ function connectToChat(userId) {
 }
 
 function sendMsg(text) {
-    stompClient.send("/app/chat/" + selectedUserId, {}, JSON.stringify({
-        receiverId: selectedUserId,
+    stompClient.send("/app/chat/" + $selectedUserId, {}, JSON.stringify({
+        receiverId: $selectedUserId,
         senderId: $loginUserId,
         message: text
     }));
 }
 
 function selectUser(userId) {
+    // 선택한 유저 설정
     console.log("selecting user Id: " + userId);
-    selectedUserId = userId
-    // 채팅방 정보 가져오기
+    $('#chat-with').text($('#username-area-'+userId).text())
+    $selectedUserId = userId
 
+    // 채팅 내역 가져오기
     $chatHistoryList.empty();
     fetchAllMessagesWith(userId);
 
-
-    let isNew = document.getElementById("newMessages_" + userId) !== null;
-    if (isNew) {
-        let element = document.getElementById("newMessages_" + userId);
-        element.parentNode.removeChild(element);
-        $newMessageCount = 0;
-    }
+    // 메시지 모두 읽음 처리하기
+    unreadCount.set(userId, 0)
+    $('#newMessages_' + userId).empty();
 }
 
 function fetchAllMessagesWith(userId) {
@@ -141,7 +141,7 @@ function fetchAllUsers() {
                     newMessages: 0,
                     username: members[i].username,
                     userId: members[i].id,
-                    online: "online??"
+                    online: "online"
                 }
                 $('#user-list').find('hr').before(userTemplate(context));
             }
