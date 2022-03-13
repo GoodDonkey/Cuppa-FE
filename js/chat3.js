@@ -6,6 +6,7 @@ let $loginUserId;
 let template = Handlebars.compile($("#message-template").html());
 let userTemplate = Handlebars.compile($("#user-template").html());
 let unreadCount = new Map();
+moment.locale('ko');
 
 $(document).ready(function() {
     $loginUserId = getUserId();
@@ -64,7 +65,8 @@ function sendMsg(text) {
     stompClient.send("/app/chat/" + $selectedUserId, {}, JSON.stringify({
         receiverId: $selectedUserId,
         senderId: $loginUserId,
-        message: text
+        message: text,
+        createdAt: null
     }));
 }
 
@@ -105,13 +107,13 @@ function fetchAllMessagesWith(userId) {
                 if (message.sender.id === $loginUserId) { // 내가 보낸 메시지면
                     let context = {
                         message: message.message.trim(),
-                        time: getCurrentTime(), // Todo: 메시지에 저장된 시간으로 바꾸기
+                        time: moment(message.createdAt).format('LT'),
                     };
                     $chatHistoryList.append(template(context));
                 } else { // 상대방 메시지면 다르게
                     let contextResponse = {
                         message: message.message.trim(),
-                        time: getCurrentTime(),
+                        time: moment(message.createdAt).format('LT'),
                         username: message.sender.username
                     };
                     $chatHistoryList.append(templateResponse(contextResponse));
