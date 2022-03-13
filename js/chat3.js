@@ -19,6 +19,7 @@ $(document).ready(function() {
         $('#loginUserArea').empty().text("로그인 해주세요");
     }
     connectToChatServer();
+    $textarea.attr('disabled', true);
 })
 
 function connectToChatServer() {
@@ -68,6 +69,9 @@ function sendMsg(text) {
 }
 
 function selectUser(userId) {
+    // 채팅창 풀기
+    $textarea.attr('disabled', false);
+
     // 선택한 유저 설정
     console.log("selecting user Id: " + userId);
     $('#chat-with').text($('#username-area-'+userId).text())
