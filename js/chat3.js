@@ -27,14 +27,16 @@ function connectToChatServer() {
     console.log("connecting to chat server...")
     let socket = new SockJS(url + '/stomp/chat');
     stompClient = Stomp.over(socket);
+    stompClient.heartbeat.outgoing = 0;
+    stompClient.heartbeat.incoming = 0;
     connectToChat($loginUserId); // 나에게 오는 메시지를 subscribe
 }
 
 function connectToChat(userId) {
     console.log("connecting to chat...")
-    stompClient.connect({}, function (frame) {
+    stompClient.connect("cuppamq", "cuppaadmin", function (frame) {
         console.log("connected to: " + frame);
-        stompClient.subscribe("/topic/messages/" + userId, function (response) {
+        stompClient.subscribe("/exchange/chat.exchange/to." + userId, function (response) {
             let data = JSON.parse(response.body);
             console.log(data)
             console.log("selectedUser: " + $selectedUserId);
@@ -62,7 +64,7 @@ function connectToChat(userId) {
 }
 
 function sendMsg(text) {
-    stompClient.send("/app/chat/" + $selectedUserId, {}, JSON.stringify({
+    stompClient.send("/app/chat." + $selectedUserId, {}, JSON.stringify({
         receiverId: $selectedUserId,
         senderId: $loginUserId,
         message: text,
@@ -90,7 +92,7 @@ function selectUser(userId) {
 
 function fetchAllMessagesWith(userId) {
     $.ajax({
-        url: url + "/chat/fetchAllMessages/" + userId,
+        url: url + "/messages/" + userId,
         type: "GET",
         dataType: 'json',
         contentType: "application/json; charset=utf-8",
@@ -130,7 +132,7 @@ function fetchAllMessagesWith(userId) {
 function fetchAllUsers() {
     // Json 을 예상하지만 html이 올 수 있다.
     $.ajax({
-        url: url + "/fetchAllUsers",
+        url: url + "/members",
         type: "GET",
         dataType: 'json',
         contentType: "application/json; charset=utf-8",
@@ -162,7 +164,7 @@ function fetchAllUsers() {
 function getUserId() {
     let userId;
     $.ajax({
-        url: url + "/members/getUserId",
+        url: url + "/members/userId",
         async: false,
         type: "GET",
         // dataType: 'json',
@@ -187,7 +189,7 @@ function getUserId() {
 function getUsername() {
     let username;
     $.ajax({
-        url: url + "/members/getUsername",
+        url: url + "/members/username",
         async: false,
         type: "GET",
         // dataType: 'json',
