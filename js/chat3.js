@@ -18,6 +18,8 @@ $(document).ready(function() {
         // fetchChatRooms()
     } else {
         $('#loginUserArea').empty().text("로그인 해주세요");
+        $loginButton.show();
+
     }
     connectToChatServer();
     $textarea.attr('disabled', true);

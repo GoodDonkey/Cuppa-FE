@@ -12,6 +12,7 @@ function init() {
 function bindEvents() {
     $button.on('click', addMessage.bind(this));
     $textarea.on('keyup', addMessageEnter.bind(this));
+    $loginButton.hide();
 }
 
 function cacheDOM() {
@@ -19,6 +20,7 @@ function cacheDOM() {
     $button = $('#sendBtn');
     $textarea = $('#message-input');
     $chatHistoryList = $chatHistory;
+    $loginButton = $('#loginButton')
 }
 
 function sendMessage(message) {
