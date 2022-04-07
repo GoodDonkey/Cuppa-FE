@@ -1,4 +1,3 @@
-const url = 'http://127.0.0.1:8081';
 let stompClient;
 let $selectedUserId;
 let $loginUsername;
@@ -27,7 +26,7 @@ $(document).ready(function() {
 
 function connectToChatServer() {
     console.log("connecting to chat server...")
-    let socket = new SockJS(url + '/stomp/chat');
+    let socket = new SockJS(API_URL + '/stomp/chat');
     stompClient = Stomp.over(socket);
     stompClient.heartbeat.outgoing = 0;
     stompClient.heartbeat.incoming = 0;
@@ -94,7 +93,7 @@ function selectUser(userId) {
 
 function fetchAllMessagesWith(userId) {
     $.ajax({
-        url: url + "/messages/" + userId,
+        url: API_URL + "/messages/" + userId,
         type: "GET",
         dataType: 'json',
         contentType: "application/json; charset=utf-8",
@@ -134,7 +133,7 @@ function fetchAllMessagesWith(userId) {
 function fetchAllUsers() {
     // Json 을 예상하지만 html이 올 수 있다.
     $.ajax({
-        url: url + "/members",
+        url: API_URL + "/members",
         type: "GET",
         dataType: 'json',
         contentType: "application/json; charset=utf-8",
@@ -166,7 +165,7 @@ function fetchAllUsers() {
 function getUserId() {
     let userId;
     $.ajax({
-        url: url + "/members/userId",
+        url: API_URL + "/members/userId",
         async: false,
         type: "GET",
         // dataType: 'json',
@@ -191,7 +190,7 @@ function getUserId() {
 function getUsername() {
     let username;
     $.ajax({
-        url: url + "/members/username",
+        url: API_URL + "/members/username",
         async: false,
         type: "GET",
         // dataType: 'json',
