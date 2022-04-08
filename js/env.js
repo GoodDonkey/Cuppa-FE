@@ -1,1 +1,1 @@
-let API_URL = "http://3.39.59.183:8080"
+let API_URL = "https://cuppa-chat.site"
