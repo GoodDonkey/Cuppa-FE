@@ -182,7 +182,6 @@ function getUserId() {
         url: API_URL + "/api/v1/members/userId",
         async: false,
         type: "GET",
-        dataType: 'json',
         contentType: "application/json; charset=utf-8",
         crossDomain: true,
         xhrFields: {
@@ -207,7 +206,6 @@ function getUsername() {
         url: API_URL + "/api/v1/members/username",
         async: false,
         type: "GET",
-        dataType: 'json',
         contentType: "application/json; charset=utf-8",
         crossDomain: true,
         xhrFields: {
