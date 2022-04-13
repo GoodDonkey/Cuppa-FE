@@ -7,12 +7,12 @@ let userTemplate = Handlebars.compile($("#user-template").html());
 let unreadCount = new Map();
 moment.locale('ko');
 
-$(document).ready(function() {
+$(document).ready(function () {
     $loginUserId = getUserId();
     $loginUsername = getUsername();
     console.log("$loginUsername", $loginUsername)
     if ($loginUserId !== null) {
-        document.getElementById("usernameArea").innerHTML=$loginUsername;
+        document.getElementById("usernameArea").innerHTML = $loginUsername;
         fetchAllUsers()
         // fetchChatRooms()
     } else {
@@ -24,9 +24,23 @@ $(document).ready(function() {
     $textarea.attr('disabled', true);
 })
 
+$.ajaxSetup({
+    beforeSend: function (xhr) {
+        xhr.setRequestHeader("AJAX", true);
+    }
+})
+
+//
+// $.ajaxSetup({
+//     headers: {
+//         'X-CSRF-TOKEN': $('meta[name="csrf-token"]').attr('content')
+//     }
+// });
+
+
 function connectToChatServer() {
     console.log("connecting to chat server...")
-    let socket = new SockJS(API_URL + '/stomp/chat');
+    let socket = new SockJS(API_URL + '/api/v1/stomp/chat');
     stompClient = Stomp.over(socket);
     stompClient.heartbeat.outgoing = 0;
     stompClient.heartbeat.incoming = 0;
@@ -79,7 +93,7 @@ function selectUser(userId) {
 
     // 선택한 유저 설정
     console.log("selecting user Id: " + userId);
-    $('#chat-with').text($('#username-area-'+userId).text())
+    $('#chat-with').text($('#username-area-' + userId).text())
     $selectedUserId = userId
 
     // 채팅 내역 가져오기
@@ -93,7 +107,7 @@ function selectUser(userId) {
 
 function fetchAllMessagesWith(userId) {
     $.ajax({
-        url: API_URL + "/messages/" + userId,
+        url: API_URL + "/api/v1/messages/" + userId,
         type: "GET",
         dataType: 'json',
         contentType: "application/json; charset=utf-8",
@@ -133,7 +147,7 @@ function fetchAllMessagesWith(userId) {
 function fetchAllUsers() {
     // Json 을 예상하지만 html이 올 수 있다.
     $.ajax({
-        url: API_URL + "/members",
+        url: API_URL + "/api/v1/members",
         type: "GET",
         dataType: 'json',
         contentType: "application/json; charset=utf-8",
@@ -165,24 +179,24 @@ function fetchAllUsers() {
 function getUserId() {
     let userId;
     $.ajax({
-        url: API_URL + "/members/userId",
+        url: API_URL + "/api/v1/members/userId",
         async: false,
         type: "GET",
-        // dataType: 'json',
+        dataType: 'json',
         contentType: "application/json; charset=utf-8",
         crossDomain: true,
         xhrFields: {
             withCredentials: true
         },
-        success: function(response) {
+        success: function (response) {
             userId = response
         },
-        error: function(response) {
-            console.log("getUsername error", response)
+        error: function (response) {
+            console.log("getUserId error", response)
             userId = null
         }
-    }).always(function (response){
-        console.log("getUserName()", response)
+    }).always(function (response) {
+        console.log("getUserId()", response)
     })
     return userId
 }
@@ -190,23 +204,23 @@ function getUserId() {
 function getUsername() {
     let username;
     $.ajax({
-        url: API_URL + "/members/username",
+        url: API_URL + "/api/v1/members/username",
         async: false,
         type: "GET",
-        // dataType: 'json',
+        dataType: 'json',
         contentType: "application/json; charset=utf-8",
         crossDomain: true,
         xhrFields: {
             withCredentials: true
         },
-        success: function(response) {
+        success: function (response) {
             username = response
         },
-        error: function(response) {
+        error: function (response) {
             console.log("getUsername error", response)
             username = null
         }
-    }).always(function (response){
+    }).always(function (response) {
         console.log("getUserName()", response)
     })
     return username
