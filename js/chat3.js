@@ -10,7 +10,6 @@ moment.locale('ko');
 $(document).ready(function () {
     $loginUserId = getUserId();
     $loginUsername = getUsername();
-    console.log("$loginUsername", $loginUsername)
     if ($loginUserId !== null) {
         document.getElementById("usernameArea").innerHTML = $loginUsername;
         fetchAllUsers()
@@ -49,14 +48,11 @@ function connectToChatServer() {
 
 function connectToChat(userId) {
     console.log("connecting to chat...")
-    stompClient.connect("cuppamq", "cuppaadmin", function (frame) {
-        console.log("connected to: " + frame);
+    stompClient.connect({}, function (frame) {
         stompClient.subscribe("/exchange/chat.exchange/to." + userId, function (response) {
             let data = JSON.parse(response.body);
-            console.log(data)
             console.log("selectedUser: " + $selectedUserId);
             let senderId = String(data.sender.id);
-            console.log("data.sender.id: " + senderId);
             // 보낸 사람과 채팅을 하고 있는 경우
             if ($selectedUserId === senderId) {
                 render(data);
@@ -70,7 +66,6 @@ function connectToChat(userId) {
                     unreadCount.set(senderId, unreadCount.get(senderId) + 1)
                     newMessages.html('+' + unreadCount.get(senderId))
                 }
-                console.log(unreadCount)
             }
         });
     }, function () {
@@ -92,7 +87,6 @@ function selectUser(userId) {
     $textarea.attr('disabled', false);
 
     // 선택한 유저 설정
-    console.log("selecting user Id: " + userId);
     $('#chat-with').text($('#username-area-' + userId).text())
     $selectedUserId = userId
 
@@ -117,7 +111,6 @@ function fetchAllMessagesWith(userId) {
         },
         success: function (response) {
             // message를 화면에 보여준다
-            console.log(response)
             scrollToBottom();
 
             response.forEach(message => {
@@ -158,7 +151,6 @@ function fetchAllUsers() {
     }).done(
         function (response) {
             let members = response;
-            console.log("fetchAllUsers(): ", response);
             for (let i = 0; i < members.length; i++) {
                 let context = {
                     newMessages: 0,
@@ -195,7 +187,6 @@ function getUserId() {
             userId = null
         }
     }).always(function (response) {
-        console.log("getUserId()", response)
     })
     return userId
 }
@@ -219,7 +210,6 @@ function getUsername() {
             username = null
         }
     }).always(function (response) {
-        console.log("getUserName()", response)
     })
     return username
 }
