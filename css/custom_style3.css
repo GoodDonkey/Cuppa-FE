@@ -1,5 +1,8 @@
 body{margin-top:20px;}
 
+.all-container {
+    height: 500px;
+}
 .chat-online {
     color: #34ce57
 }
@@ -11,7 +14,7 @@ body{margin-top:20px;}
 .chat-messages {
     display: flex;
     flex-direction: column;
-    max-height: 800px;
+    max-height: 600px;
     min-height: 200px;
     overflow-y: scroll
 }
@@ -43,4 +46,29 @@ body{margin-top:20px;}
 }
 .border-top {
     border-top: 1px solid #dee2e6!important;
+}
+.user-pane {
+    height: auto;
+}
+.user-list {
+    min-height: 100px;
+    overflow-y: scroll;
+}
+
+@media (max-width: 576px) {
+}
+
+@media (max-width: 768px) {
+}
+
+@media (max-width: 992px) {
+    .user-list {
+        max-height: 300px;
+    }
+}
+
+@media (max-width: 993px) {
+    .user-list {
+        height: auto;
+    }
 }
