@@ -4,7 +4,6 @@ let $textarea;
 let $chatHistoryList;
 let templateResponse = Handlebars.compile($("#message-response-template").html());
 
-
 function init() {
     cacheDOM();
     bindEvents();
@@ -57,7 +56,7 @@ function render(data) {
 }
 
 function getCurrentTime() {
-    return new Date().toLocaleTimeString().replace(/([\d]+:[\d]{2})(:[\d]{2})(.*)/, "$1$3");
+    return moment().format('LT')
 }
 
 function scrollToBottom() {
